@@ -2,44 +2,55 @@ package com.example.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.example.user.entity.Notification;
 import com.example.user.entity.User;
+import com.example.user.exception.UserNotFoundException;
+import com.example.user.exception.NotificationNotFoundException;
 import com.example.user.feignclientinterface.NotificationServiceFeignClient;
-import com.example.user.repository.UserRepository;
+import com.example.user.feignclientinterface.UserServiceFeignClient;
+
+import jakarta.validation.Valid;
+
 import java.util.Optional;
 import java.util.List;
 
 @Service
+@Validated
 public class UserService {
+
     @Autowired
-    private UserRepository userRepository;
-    
+    private UserServiceFeignClient userServiceFeignClient;
+
     @Autowired
     private NotificationServiceFeignClient notificationServiceFeignClient;
-    
-    public Notification getNotificationByIdFeignClient(Long notificationId) {
-        return notificationServiceFeignClient.getNotificationById(notificationId);
-    }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public User updateUser(Long userId, User user) {
-        if (userRepository.existsById(userId)) {
-            user.setUserId(userId);
-            return userRepository.save(user);
+    public User getUserByIdFeignClient(Long userId) {
+        User user = userServiceFeignClient.getUserById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found with id " + userId);
         }
-        return null;
+        return user;
     }
 
-    public User getUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user.orElse(null);
+    public User createUserByFeignClient(@Valid User user) {
+        return userServiceFeignClient.createUser(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User updateUserByIdFeignClient(Long userId, @Valid User user) {
+        User existingUser = userServiceFeignClient.getUserById(userId);
+        if (existingUser == null) {
+            throw new UserNotFoundException("User not found with id " + userId);
+        }
+        return userServiceFeignClient.updateUser(userId, user);
+    }
+
+    public Notification getNotificationByIdFeignClient(Long notificationId) {
+        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
+        if (notification == null) {
+            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
+        }
+        return notification;
     }
 }

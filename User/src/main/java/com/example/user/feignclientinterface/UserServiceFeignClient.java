@@ -1,4 +1,4 @@
-package com.example.admin.feignclientinterface;
+package com.example.user.feignclientinterface;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.admin.entity.User;
+import com.example.user.entity.User;
 
-@FeignClient(name = "user-service", url = "http://localhost:8008")
+@FeignClient(name = "admin-service", url = "http://localhost:8009")
 public interface UserServiceFeignClient {
-    @GetMapping("/users/{userId}")
+    @GetMapping("/admin/{userId}")
     User getUserById(@PathVariable("userId") Long userId);
 
-    @PostMapping("/users")
+    @PostMapping("/admin/users")
     User createUser(@RequestBody User user);
     
-    @PutMapping("/users/{userId}")
-    User updateUser(@PathVariable Long userId,@RequestBody User user);
+    @PutMapping("/admin/{userId}")
+    User updateUser(@PathVariable Long userId, @RequestBody User user);
 }

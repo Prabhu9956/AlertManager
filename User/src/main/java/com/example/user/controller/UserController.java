@@ -19,23 +19,19 @@ public class UserController {
         return userService.getNotificationByIdFeignClient(notificationId);
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    @GetMapping("/feign/users/{userId}")
+    public User getUserByIdFeignClient(@PathVariable Long userId) {
+        return userService.getUserByIdFeignClient(userId);
     }
-
-    @PutMapping("/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User user) {
-        return userService.updateUser(userId, user);
+    
+    @PostMapping("/feign/users")
+    public User createUserByFeignClient(@RequestBody User user) {
+        return userService.createUserByFeignClient(user);
     }
-
-    @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+    
+    @PutMapping("/feign/users/{userId}")
+    public User updateUserByIdFeignClient(@PathVariable Long userId, @RequestBody User user) {
+    	return userService.updateUserByIdFeignClient(userId, user);
     }
-
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
+    
 }

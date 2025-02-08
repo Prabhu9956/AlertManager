@@ -15,28 +15,26 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
     
-    @GetMapping("/feign/users/{userId}")
-    public User getUserByIdFeignClient(@PathVariable Long userId) {
-        return adminService.getUserByIdFeignClient(userId);
-    }
-    
     @GetMapping("/feign/notification/{notificationId}")
     public Notification getNotificationByIdFeignClient(@PathVariable Long userId) {
         return adminService.getNotificationByIdFeignClient(userId);
     }
-    
-    @PostMapping("/feign/users")
-    public User createUserByFeignClient(@RequestBody User user) {
-        return adminService.createUserByFeignClient(user);
-    }
-    
     @PostMapping("/feign/notification")
     public Notification createNotificationFeignClient(@RequestBody Notification notification) {
-        return adminService.createNotificationFeignClient(notification);
+    	return adminService.createNotificationFeignClient(notification);
     }
     
-
-    @PostMapping
+    @GetMapping("/feign/notifications")
+    public List<Notification> getAllNotificationsFeignClient(){
+    	return adminService.createNotificationsFeignClient();
+    }
+    
+    @DeleteMapping("/feign/notification/{notificationId}")
+    public void deleteNotificationByIdFeignClient(@PathVariable Long notificationId) {
+    	adminService.deleteNotificationByIdFeignClient(notificationId);
+    }
+    
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         return adminService.createUser(user);
     }
@@ -60,4 +58,5 @@ public class AdminController {
     public void deleteUserById(@PathVariable Long userId) {
         adminService.deleteUserById(userId);
     }
+    
 }
