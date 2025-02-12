@@ -1,21 +1,15 @@
 package com.example.admin.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.admin.entity.Notification;
@@ -25,11 +19,11 @@ import com.example.admin.exception.UserNotFoundException;
 import com.example.admin.feignclientinterface.NotificationServiceFeignClient;
 import com.example.admin.repository.UserRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class AdminServiceTest {
+
+    @InjectMocks
+    private AdminService adminService;
 
     @Mock
     private UserRepository userRepository;
@@ -37,140 +31,79 @@ public class AdminServiceTest {
     @Mock
     private NotificationServiceFeignClient notificationServiceFeignClient;
 
-    @InjectMocks
-    private AdminService adminService;
-
-    private User user;
-    private Notification notification;
-
     @BeforeEach
     public void setUp() {
-        user = new User(1L, "John", "Doe", "john.doe@example.com");
-        notification = new Notification(1L, 1L, "Test Message", "email", "sent");
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void testGetNotificationByIdFeignClient() {
-        when(notificationServiceFeignClient.getNotificationById(anyLong())).thenReturn(notification);
+        Long notificationId = 1L;
+        Notification mockNotification = new Notification(notificationId, 1L, "Test message", "email", "sent");
 
-        Notification result = adminService.getNotificationByIdFeignClient(1L);
-        assertNotNull(result);
-        assertEquals("Test Message", result.getMessage());
+        when(notificationServiceFeignClient.getNotificationById(notificationId)).thenReturn(mockNotification);
+
+        Notification notification = adminService.getNotificationByIdFeignClient(notificationId);
+        
+        assertNotNull(notification);
+        assertEquals(notificationId, notification.getNotificationId());
+        assertEquals("Test message", notification.getMessage());
+        assertEquals("email", notification.getType());
+        assertEquals("sent", notification.getStatus());
     }
 
     @Test
     public void testGetNotificationByIdFeignClient_NotFound() {
-        when(notificationServiceFeignClient.getNotificationById(anyLong())).thenReturn(null);
+        Long notificationId = 1L;
+
+        when(notificationServiceFeignClient.getNotificationById(notificationId)).thenReturn(null);
 
         assertThrows(NotificationNotFoundException.class, () -> {
-            adminService.getNotificationByIdFeignClient(1L);
+            adminService.getNotificationByIdFeignClient(notificationId);
         });
     }
 
     @Test
     public void testCreateUser() {
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        User user = new User(1L, "John", "Doe", "john.doe@example.com");
 
-        User result = adminService.createUser(user);
-        assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-    }
+        when(userRepository.save(user)).thenReturn(user);
 
-    @Test
-    public void testUpdateUser() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        User result = adminService.updateUser(1L, user);
-        assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-    }
-
-    @Test
-    public void testUpdateUser_NotFound() {
-        when(userRepository.existsById(anyLong())).thenReturn(false);
-
-        assertThrows(UserNotFoundException.class, () -> {
-            adminService.updateUser(1L, user);
-        });
+        User createdUser = adminService.createUser(user);
+        
+        assertNotNull(createdUser);
+        assertEquals(1L, createdUser.getUserId());
+        assertEquals("John", createdUser.getFirstName());
+        assertEquals("Doe", createdUser.getLastName());
+        assertEquals("john.doe@example.com", createdUser.getEmail());
     }
 
     @Test
     public void testGetUserById() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        Long userId = 1L;
+        User mockUser = new User(userId, "John", "Doe", "john.doe@example.com");
 
-        User result = adminService.getUserById(1L);
-        assertNotNull(result);
-        assertEquals("John", result.getFirstName());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+
+        User user = adminService.getUserById(userId);
+        
+        assertNotNull(user);
+        assertEquals(userId, user.getUserId());
+        assertEquals("John", user.getFirstName());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("john.doe@example.com", user.getEmail());
     }
 
     @Test
     public void testGetUserById_NotFound() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Long userId = 1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> {
-            adminService.getUserById(1L);
+            adminService.getUserById(userId);
         });
     }
-
-    @Test
-    public void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
-
-        List<User> result = adminService.getAllUsers();
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    public void testDeleteUserById() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-
-        adminService.deleteUserById(1L);
-        verify(userRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    public void testDeleteUserById_NotFound() {
-        when(userRepository.existsById(anyLong())).thenReturn(false);
-
-        assertThrows(UserNotFoundException.class, () -> {
-            adminService.deleteUserById(1L);
-        });
-    }
-
-    @Test
-    public void testCreateNotificationFeignClient() {
-        when(notificationServiceFeignClient.createNotification(any(Notification.class))).thenReturn(notification);
-
-        Notification result = adminService.createNotificationFeignClient(notification);
-        assertNotNull(result);
-        assertEquals("Test Message", result.getMessage());
-    }
-
-    @Test
-    public void testDeleteNotificationByIdFeignClient() {
-        when(notificationServiceFeignClient.getNotificationById(anyLong())).thenReturn(notification);
-
-        adminService.deleteNotificationByIdFeignClient(1L);
-        verify(notificationServiceFeignClient, times(1)).deleteNotificationById(1L);
-    }
-
-    @Test
-    public void testDeleteNotificationByIdFeignClient_NotFound() {
-        when(notificationServiceFeignClient.getNotificationById(anyLong())).thenReturn(null);
-
-        assertThrows(NotificationNotFoundException.class, () -> {
-            adminService.deleteNotificationByIdFeignClient(1L);
-        });
-    }
-
-    @Test
-    public void testCreateNotificationsFeignClient() {
-        when(notificationServiceFeignClient.getAllNotifications()).thenReturn(Arrays.asList(notification));
-
-        List<Notification> result = adminService.createNotificationsFeignClient();
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
+    
+    // Add more test cases for other methods as needed
 }

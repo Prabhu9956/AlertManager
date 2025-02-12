@@ -1,82 +1,67 @@
 package com.example.admin.service;
 
+import com.example.admin.entity.Notification;
+import com.example.admin.entity.User;
+import com.example.admin.service.user.UserServiceImpl;
+import com.example.admin.service.notification.NotificationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import com.example.admin.entity.Notification;
-import com.example.admin.entity.User;
-import com.example.admin.exception.NotificationNotFoundException;
-import com.example.admin.exception.UserNotFoundException;
-import com.example.admin.feignclientinterface.NotificationServiceFeignClient;
-import com.example.admin.repository.UserRepository;
-
-import jakarta.validation.Valid;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Validated
 public class AdminService {
+
     @Autowired
-    private UserRepository userRepository;
-    
+    private UserServiceImpl userServiceImpl;
+
     @Autowired
-    private NotificationServiceFeignClient notificationServiceFeignClient;
-    
-    public Notification getNotificationByIdFeignClient(Long notificationId) {
-        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
-        if (notification == null) {
-            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
-        }
-        return notification;
+    private NotificationServiceImpl notificationServiceImpl;
+
+    // Method to create a user
+    public User createUser(User user) {
+        return userServiceImpl.createUser(user);
     }
 
-    public User createUser(@Valid User user) {
-        return userRepository.save(user);
+    // Method to update a user by ID
+    public User updateUser(Long userId, User user) {
+        return userServiceImpl.updateUser(userId, user);
     }
 
-    public User updateUser(Long userId, @Valid User user) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id " + userId);
-        }
-        user.setUserId(userId);
-        return userRepository.save(user);
-    }
-
+    // Method to get a user by ID
     public User getUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
-            throw new UserNotFoundException("User not found with id " + userId);
-        }
-        return user.get();
+        return userServiceImpl.getUserById(userId);
     }
 
+    // Method to get all users
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userServiceImpl.getAllUsers();
     }
 
+    // Method to delete a user by ID
     public void deleteUserById(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id " + userId);
-        }
-        userRepository.deleteById(userId);
+        userServiceImpl.deleteUserById(userId);
     }
 
-    public Notification createNotificationFeignClient(@Valid Notification notification) {
-        return notificationServiceFeignClient.createNotification(notification);
+    // Method to get a notification by ID using Feign Client
+    public Notification getNotificationByIdFeignClient(Long notificationId) {
+        return notificationServiceImpl.getNotificationByIdFeignClient(notificationId);
     }
 
+    // Method to create a notification using Feign Client
+    public Notification createNotificationFeignClient(Notification notification) {
+        return notificationServiceImpl.createNotificationFeignClient(notification);
+    }
+
+    // Method to delete a notification by ID using Feign Client
     public void deleteNotificationByIdFeignClient(Long notificationId) {
-        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
-        if (notification == null) {
-            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
-        }
-        notificationServiceFeignClient.deleteNotificationById(notificationId);
+        notificationServiceImpl.deleteNotificationByIdFeignClient(notificationId);
     }
 
-    public List<Notification> createNotificationsFeignClient() {
-        return notificationServiceFeignClient.getAllNotifications();
+    // Method to get all notifications using Feign Client
+    public List<Notification> getAllNotificationsFeignClient() {
+        return notificationServiceImpl.getAllNotificationsFeignClient();
     }
 }

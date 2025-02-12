@@ -6,51 +6,39 @@ import org.springframework.validation.annotation.Validated;
 
 import com.example.user.entity.Notification;
 import com.example.user.entity.User;
-import com.example.user.exception.UserNotFoundException;
-import com.example.user.exception.NotificationNotFoundException;
-import com.example.user.feignclientinterface.NotificationServiceFeignClient;
-import com.example.user.feignclientinterface.UserServiceFeignClient;
+import com.example.user.service.impl.UserServiceImpl;
+import com.example.user.service.impl.NotificationServiceImpl;
 
 import jakarta.validation.Valid;
-
-import java.util.Optional;
 import java.util.List;
 
 @Service
 @Validated
 public class UserService {
+    
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
-    private UserServiceFeignClient userServiceFeignClient;
+    private NotificationServiceImpl notificationServiceImpl;
 
-    @Autowired
-    private NotificationServiceFeignClient notificationServiceFeignClient;
-
+    // Method to get a user by ID using Feign Client
     public User getUserByIdFeignClient(Long userId) {
-        User user = userServiceFeignClient.getUserById(userId);
-        if (user == null) {
-            throw new UserNotFoundException("User not found with id " + userId);
-        }
-        return user;
+        return userServiceImpl.getUserByIdFeignClient(userId);
     }
 
+    // Method to create a user using Feign Client with validation
     public User createUserByFeignClient(@Valid User user) {
-        return userServiceFeignClient.createUser(user);
+        return userServiceImpl.createUserByFeignClient(user);
     }
 
+    // Method to update a user by ID using Feign Client with validation
     public User updateUserByIdFeignClient(Long userId, @Valid User user) {
-        User existingUser = userServiceFeignClient.getUserById(userId);
-        if (existingUser == null) {
-            throw new UserNotFoundException("User not found with id " + userId);
-        }
-        return userServiceFeignClient.updateUser(userId, user);
+        return userServiceImpl.updateUserByIdFeignClient(userId, user);
     }
 
+    // Method to get a notification by ID using Feign Client
     public Notification getNotificationByIdFeignClient(Long notificationId) {
-        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
-        if (notification == null) {
-            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
-        }
-        return notification;
+        return notificationServiceImpl.getNotificationByIdFeignClient(notificationId);
     }
 }
