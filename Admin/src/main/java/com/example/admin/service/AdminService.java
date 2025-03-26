@@ -14,37 +14,11 @@ import java.util.List;
 @Validated
 public class AdminService {
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-    // Method to create a user
-    public User createUser(User user) {
-        return userServiceImpl.createUser(user);
-    }
-
-    // Method to update a user by ID
-    public User updateUser(Long userId, User user) {
-        return userServiceImpl.updateUser(userId, user);
-    }
-
-    // Method to get a user by ID
-    public User getUserById(Long userId) {
-        return userServiceImpl.getUserById(userId);
-    }
-
-    // Method to get all users
-    public List<User> getAllUsers() {
-        return userServiceImpl.getAllUsers();
-    }
-
-    // Method to delete a user by ID
-    public void deleteUserById(Long userId) {
-        userServiceImpl.deleteUserById(userId);
-    }
-
+    
     // Method to get a notification by ID using Feign Client
     public Notification getNotificationByIdFeignClient(Long notificationId) {
         return notificationServiceImpl.getNotificationByIdFeignClient(notificationId);

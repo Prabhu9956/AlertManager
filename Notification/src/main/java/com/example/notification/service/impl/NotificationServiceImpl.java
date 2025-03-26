@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @Validated
 public class NotificationServiceImpl {
-    
+
     @Autowired
     private NotificationRepository notificationRepository;
 
@@ -53,5 +53,10 @@ public class NotificationServiceImpl {
             throw new NotificationNotFoundException("Notification not found with id " + notificationId);
         }
         notificationRepository.deleteById(notificationId);
+    }
+
+    // Method to get notifications by userId
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserId(userId);
     }
 }

@@ -1,27 +1,31 @@
 package com.example.admin.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Notification {
-	 @Id
-	 private Long notificationId;
+	 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long notificationId;
 
-	 @NotNull(message = "User ID is mandatory")
-	 private Long userId;
+    @NotNull(message = "User ID is mandatory")
+    private Long userId;
 
-	 @NotBlank(message = "Message is mandatory")
-	 private String message;
+    @NotBlank(message = "Message is mandatory")
+    private String message;
 
-	 @NotBlank(message = "Type is mandatory")
-	 private String type; // e.g., email, SMS, push
+    @NotBlank(message = "Type is mandatory")
+    private String type; // e.g., email, SMS, push
 
-	 @NotBlank(message = "Status is mandatory")
-	 private String status; // e.g., sent, pending
-	    
+    @NotBlank(message = "Status is mandatory")
+    private String status; // e.g., sent, pending
+    
 	public Long getNotificationId() {
 		return notificationId;
 	}
@@ -69,6 +73,8 @@ public class Notification {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	    
+	
     
 }
 

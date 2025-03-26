@@ -16,29 +16,18 @@ import java.util.List;
 @Validated
 public class UserService {
     
-    @Autowired
-    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-    // Method to get a user by ID using Feign Client
-    public User getUserByIdFeignClient(Long userId) {
-        return userServiceImpl.getUserByIdFeignClient(userId);
-    }
-
-    // Method to create a user using Feign Client with validation
-    public User createUserByFeignClient(@Valid User user) {
-        return userServiceImpl.createUserByFeignClient(user);
-    }
-
-    // Method to update a user by ID using Feign Client with validation
-    public User updateUserByIdFeignClient(Long userId, @Valid User user) {
-        return userServiceImpl.updateUserByIdFeignClient(userId, user);
-    }
+    
 
     // Method to get a notification by ID using Feign Client
     public Notification getNotificationByIdFeignClient(Long notificationId) {
         return notificationServiceImpl.getNotificationByIdFeignClient(notificationId);
     }
+
+	public List<Notification> getNotificationsByUserIdFeignClient(Long userId) {
+		return notificationServiceImpl.getNotificationByUserIdFeignClient(userId);
+	}
 }

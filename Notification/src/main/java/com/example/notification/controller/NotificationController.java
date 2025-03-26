@@ -42,4 +42,10 @@ public class NotificationController {
     public void deleteNotificationById(@PathVariable Long notificationId) {
         notificationService.deleteNotificationById(notificationId);
     }
+    
+ // Endpoint to get notifications by userId
+    @GetMapping("/user/{userId}")
+    public List<Notification> getNotificationsByUserId(@PathVariable Long userId) {
+        return notificationService.getNotificationsByUserId(userId);
+    }
 }

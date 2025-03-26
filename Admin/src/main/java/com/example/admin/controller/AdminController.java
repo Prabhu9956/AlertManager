@@ -40,33 +40,5 @@ public class AdminController {
         adminService.deleteNotificationByIdFeignClient(notificationId);
     }
 
-    // Endpoint to create a user
-    @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
-        return adminService.createUser(user);
-    }
-
-    // Endpoint to update a user by ID
-    @PutMapping("/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User user) {
-        return adminService.updateUser(userId, user);
-    }
-
-    // Endpoint to get a user by ID
-    @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId) {
-        return adminService.getUserById(userId);
-    }
-
-    // Endpoint to get all users
-    @GetMapping
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
-
-    // Endpoint to delete a user by ID
-    @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable Long userId) {
-        adminService.deleteUserById(userId);
-    }
+    
 }

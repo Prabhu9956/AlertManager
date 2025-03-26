@@ -17,10 +17,17 @@ public class NotificationServiceImpl {
 
     // Method to get a notification by ID using Feign Client
     public Notification getNotificationByIdFeignClient(Long notificationId) {
-        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
-        if (notification == null) {
-            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
-        }
+    	Notification notification = null;
+    	try {
+    		notification = notificationServiceFeignClient.getNotificationById(notificationId);
+		} catch (Exception e) {
+			throw new NotificationNotFoundException("Notification not found with id " + notificationId);
+		}
+//        Notification notification = notificationServiceFeignClient.getNotificationById(notificationId);
+//        if (notification == null) {
+//        	System.out.println("notosihfis");
+//            throw new NotificationNotFoundException("Notification not found with id " + notificationId);
+//        }
         return notification;
     }
 

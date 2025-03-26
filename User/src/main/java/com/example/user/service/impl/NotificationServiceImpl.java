@@ -26,4 +26,12 @@ public class NotificationServiceImpl {
         }
         return notification;
     }
+
+	public List<Notification> getNotificationByUserIdFeignClient(Long userId) {
+		List<Notification> notification = notificationServiceFeignClient.getNotificationsByUserId(userId);
+        if (notification == null) {
+            throw new NotificationNotFoundException("Notification not found with id " + userId);
+        }
+        return notification;
+	}
 }

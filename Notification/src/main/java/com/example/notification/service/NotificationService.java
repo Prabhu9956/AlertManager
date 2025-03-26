@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Validated
 public class NotificationService {
-    
+
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
@@ -40,5 +40,10 @@ public class NotificationService {
     // Method to delete a notification by ID
     public void deleteNotificationById(Long notificationId) {
         notificationServiceImpl.deleteNotificationById(notificationId);
+    }
+
+    // Method to get notifications by userId
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationServiceImpl.getNotificationsByUserId(userId);
     }
 }
